@@ -1,6 +1,12 @@
 (function() {
 	"use strict";
 	
+	$.get('/components/todo/status_codes.hbs', function(content) {
+		var template = Handlebars.compile(content);
+//		$('body').append(template(statusCodes));
+		Handlebars.registerPartial("status_code_options", template(statusCodes));
+	});
+	
 	$.get('/components/todo/tasks.hbs', function(content) {
 		var template = Handlebars.compile(content);
 		$('body').append(template(tasks));
