@@ -1,13 +1,11 @@
 (function() {
 	"use strict";
-$.get('/components/todo/tasks.jqt.htm', function(templates) {
-  // Inject all those templates at the end of the document.
-  $('body').append(templates);
- 
-  // Select the newly injected invoiceTemplate and use it
-  //  render the invoice data.
-  $( "#movieTemplate" ).tmpl( movies ).appendTo( "#results" );
-});
+	
+	$.get('/components/todo/tasks.hbs', function(content) {
+		var template = Handlebars.compile(content);
+		$('body').append(template(tasks));
+	});
+	
     /*
     function loadTemplate(template, componentName) {
         var templateName = template.split('/todo/').reverse()[0].replace('.hbs', '');

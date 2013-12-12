@@ -3,7 +3,7 @@ Modernizr.load([
 	//ToDo jQuery Template
 	{
 		test : typeof Handlebars == 'undefined',
-        yep: ['/js/libs/jquery.tmpl.js']
+        yep: ['/js/libs/handlebars-1.0.0.js']
 	},
 	//ToDo jQuery Component
 	{

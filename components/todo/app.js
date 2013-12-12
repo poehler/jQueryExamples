@@ -1,16 +1,16 @@
 "use strict";
-var Tasks = [
+var tasks = { Tasks: [
 	{ "id": 21, "taskName": "Task 31", "taskStatusCode": "A", "targetCompletionDate": new Date("09/03/2013"), "actualCompletionDate": null},
 	{ "id": 22, "taskName": "Task 32", "taskStatusCode": "I", "targetCompletionDate": new Date("10/08/2013"), "actualCompletionDate": null},
 	{ "id": 23, "taskName": "Task 33", "taskStatusCode": "C", "targetCompletionDate": new Date("10/01/2013"), "actualCompletionDate": new Date("09/30/2013")},
 	{ "id": 24, "taskName": "Task 34", "taskStatusCode": "A", "targetCompletionDate": new Date("10/16/2013"), "actualCompletionDate": null}
-];
-var StatusCodes = [
+]};
+var statusCodes = { StatusCodes: [
    	{ "id": "A", "decode": "Active"},
 	{ "id": "I", "decode": "Inactive"},
 	{ "id": "O", "decode": "On Hold"},
 	{ "id": "C", "decode": "Completed"}
-];
+]};
                    
 /*
 var StatusCode = Backbone.Model.extend();
