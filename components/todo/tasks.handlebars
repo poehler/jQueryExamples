@@ -1,19 +1,15 @@
-    <div class="todo-container" align="center" class="row-fluid">
+    <div class="todo-container row-fluid" align="center">
         <header class="header" align="center">
             <h2>To Do List</h2>
         </header>
         <div class="row-fluid">
             <div class="span10 offset1">
                 <ul class="todo-list">
-                    <li class="headerRow">
-                        <div class="column-1">Name</div>
-                        <div class="column-2">Status</div>
-                        <div class="column-3">Target Date</div>
-                        <div class="column-4">Actual Date</div>
-                        <div class="column-5">Action</div>
+                    <li class="header-row">
+                    	{{> header}}
                     </li>
                     
-                    <li class="newRow">
+                    <li class="new-row">
                     	<form name="newForm" action="#">
                         <div class="column-1"><input type="text" placeholder="What needs to be done?" value="" class="task-name-input-field"></div>
                         <div class="column-2"><select name="newTaskStatusCode">{{> status_code_options}}</select></div>
@@ -23,6 +19,7 @@
                         </form>
                     </li>
                 </ul>
+                {{> tasks_listing}}
             </div>
         </div>
     

@@ -89,17 +89,17 @@
 	border-bottom:1px solid #c0c0c0;
 	}
 
-.todo-list li.headerRow div{
+.todo-list li.header-row div{
 	font-weight:bold;
 	background-color:#c0c0c0;
 	color:#00264a;
 	}
-.todo-list li.updateRow div{
+.todo-list li.update-row div{
 	background-color:#f3f3f3;
 	height: 3em;
 	padding-top:10px;
 	}
-.todo-list li.newRow div{
+.todo-list li.new-row div{
 	background-color:#f3f3f3;
 	height: 2em;
 	padding-top:15px;

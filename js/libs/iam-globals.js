@@ -1,5 +1,5 @@
 "use strict";
-var iam = (function() {
+var IAM = (function() {
 
 	var zeroPad = function(number, width) {
 		if(width === undefined)

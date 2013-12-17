@@ -1,15 +1,16 @@
 (function() {
 	"use strict";
-	
-	$.get('/components/todo/status_codes.hbs', function(content) {
-		var template = Handlebars.compile(content);
-//		$('body').append(template(statusCodes));
-		Handlebars.registerPartial("status_code_options", template(statusCodes));
+	$.get('/components/todo/tasks__status_codes.handlebars', function(content) {
+		window.statusCodesTemplate = Handlebars.compile(content);
 	});
-	
-	$.get('/components/todo/tasks.hbs', function(content) {
-		var template = Handlebars.compile(content);
-		$('body').append(template(tasks));
+	$.get('/components/todo/tasks__list.handlebars', function(content) {
+		window.taskListTemplate = Handlebars.compile(content);
+	});
+	$.get('/components/todo/tasks__header.handlebars', function(content) {
+		window.taskHeaderTemplate = Handlebars.compile(content);
+	});
+	$.get('/components/todo/tasks.handlebars', function(content) {
+		window.tasksTemplate = Handlebars.compile(content);
 	});
 	
     /*
