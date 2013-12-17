@@ -10,10 +10,10 @@
                     </li>
                     
                     <li class="new-row">
-                    	<form name="newForm" action="#">
-                        <div class="column-1"><input type="text" placeholder="What needs to be done?" value="" class="task-name-input-field"></div>
+                    	<form name="new-form" class="new-form" action="#">
+                        <div class="column-1"><input name="newTaskName" type="text" placeholder="What needs to be done?" value="" class="task-name-input-field"></div>
                         <div class="column-2"><select name="newTaskStatusCode">{{> status_code_options}}</select></div>
-                        <div class="column-3"><input type="text" placeholder="mm/dd/yyyy" value="" class="task-date-field"></div>
+                        <div class="column-3"><input name="newTargetCompletionDate" type="text" placeholder="mm/dd/yyyy" value="" class="task-date-field"></div>
                         <div class="column-4">&nbsp;</div>
                         <div class="column-5"><button class="btn">Add</button></div>
                         </form>

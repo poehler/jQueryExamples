@@ -26,9 +26,8 @@ var Task = function(options) {
     	var taskStatus = "";
     	
 		$.each(StatusCodes, function (i, val) {
-			if (that.taskStatusCode == val.id) {
+			if (that.taskStatusCode == val.id) 
 				taskStatus = val.decode;
-			}
 		});
 		
 		return taskStatus;
@@ -55,14 +54,18 @@ $('[class*="todo-component"]').each(function(i, element) {
 		cacheElements: function() {
 			this.$todoApp = $(todoDiv);
 			this.$appTitle = this.$todoApp.find('.header');
-			this.$header = this.$todoApp.find('.header-row');
+			this.$headerRow = this.$todoApp.find('.header-row');
+			this.$newTaskRow = this.$todoApp.find('.new-row');
+			this.$newTaskNameField = this.$newTaskRow.find(":input[name='newTaskName']");
+			this.$newTaskStatusCodeField = this.$newTaskRow.find(":input[name='newTaskStatusCode']");
+			this.$newTaskTargetCompletionDate = this.$newTaskRow.find(":input[name='newTargetCompletionDate']");
 			this.$items = this.$todoApp.find('.items');
 		},
 		bindEvents: function() {
-			this.$header.on('click', '.column-1', {"column": "taskName"}, this.sortByColumn);
-			this.$header.on('click', '.column-2', {"column": "taskStatusCode"}, this.sortByColumn);
-			this.$header.on('click', '.column-3', {"column": "targetCompletionDate"}, this.sortByColumn);
-			this.$header.on('click', '.column-4', {"column": "actualCompletionDate"}, this.sortByColumn);
+			this.$headerRow.on('click', '.column-1', {"column": "taskName"}, this.sortByColumn);
+			this.$headerRow.on('click', '.column-2', {"column": "taskStatusCode"}, this.sortByColumn);
+			this.$headerRow.on('click', '.column-3', {"column": "targetCompletionDate"}, this.sortByColumn);
+			this.$headerRow.on('click', '.column-4', {"column": "actualCompletionDate"}, this.sortByColumn);
 		},
 		render: function() {
 			this.$todoApp = $(todoDiv);
@@ -76,8 +79,8 @@ $('[class*="todo-component"]').each(function(i, element) {
 			this.bindEvents();
 		},
 		renderTaskHeader: function() {
-			this.$header.html("");
-			$(this.$header).append(window.taskHeaderTemplate(window[todoComponentName]));
+			this.$headerRow.html("");
+			$(this.$headerRow).append(window.taskHeaderTemplate(window[todoComponentName]));
 		},
 		renderTaskItems: function() {
 			this.$items.html("");
