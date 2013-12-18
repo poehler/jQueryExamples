@@ -47,6 +47,7 @@ $('[class*="todo-component"]').each(function(i, element) {
 			this.isSortedByActualCompletionDate = false;
 			this.sortDirection = true;
 			this.sortColumn = "taskName";
+			this.isValidNewTask = false;
 			
 			this.setSortColumn();
 			this.render();
@@ -56,16 +57,55 @@ $('[class*="todo-component"]').each(function(i, element) {
 			this.$appTitle = this.$todoApp.find('.header');
 			this.$headerRow = this.$todoApp.find('.header-row');
 			this.$newTaskRow = this.$todoApp.find('.new-row');
+			this.$newTaskButtonDiv = this.$newTaskRow.find('.column-5');
+			this.$newTaskButton = this.$newTaskRow.find('.btn');
 			this.$newTaskNameField = this.$newTaskRow.find(":input[name='newTaskName']");
 			this.$newTaskStatusCodeField = this.$newTaskRow.find(":input[name='newTaskStatusCode']");
 			this.$newTaskTargetCompletionDate = this.$newTaskRow.find(":input[name='newTargetCompletionDate']");
 			this.$items = this.$todoApp.find('.items');
+		},
+		validateNewTask: function(e){
+			var that = window[todoComponentName];
+			var isNowValid = true;
+			
+			console.log("record was " + that.isValidNewTask)
+			if(IAM.isBlank(that.$newTaskNameField.val())) 
+				isNowValid = false;
+			else if(IAM.isBlank(that.$newTaskStatusCodeField.val())) 
+				isNowValid = false;
+			else if(!IAM.isValidDate(that.$newTaskTargetCompletionDate.val())) 
+				isNowValid = false;
+			if(isNowValid != that.isValidNewTask){
+				that.isValidNewTask = isNowValid;
+				that.renderNewTaskButton();
+			}
+				
+			return isNowValid;
 		},
 		bindEvents: function() {
 			this.$headerRow.on('click', '.column-1', {"column": "taskName"}, this.sortByColumn);
 			this.$headerRow.on('click', '.column-2', {"column": "taskStatusCode"}, this.sortByColumn);
 			this.$headerRow.on('click', '.column-3', {"column": "targetCompletionDate"}, this.sortByColumn);
 			this.$headerRow.on('click', '.column-4', {"column": "actualCompletionDate"}, this.sortByColumn);
+			this.$newTaskNameField.on('blur', this.validateNewTask);
+			this.$newTaskNameField.on('keyup', this.validateNewTask);
+			this.$newTaskStatusCodeField.on('blur', this.validateNewTask);
+			this.$newTaskStatusCodeField.on('change', this.validateNewTask);
+			this.$newTaskTargetCompletionDate.on('blur', this.validateNewTask);
+			this.$newTaskTargetCompletionDate.on('keyup', this.validateNewTask);
+			this.$newTaskButton.on('click', this.addNewTask);
+		},
+		addNewTask: function() {
+			var that = window[todoComponentName];
+			if(!that.validateNewTask())
+				return;
+			var newTask = new Task({ "id": Date.UTC(new Date()), "taskName": that.$newTaskNameField.val(), "taskStatusCode": that.$newTaskStatusCodeField.val(), "targetCompletionDate": new Date(that.$newTaskTargetCompletionDate.val()), "actualCompletionDate": null});
+			that.tasks.push(newTask);
+			that.renderTaskItems();
+			that.$newTaskNameField.val("");
+			that.$newTaskStatusCodeField.val("A");
+			that.$newTaskTargetCompletionDate.val("");
+			that.renderNewTaskButton();
 		},
 		render: function() {
 			this.$todoApp = $(todoDiv);
@@ -73,6 +113,7 @@ $('[class*="todo-component"]').each(function(i, element) {
 			this.$todoApp.html("");
 			Handlebars.registerPartial("status_code_options", window.statusCodesTemplate(StatusCodes));
 			Handlebars.registerPartial("tasks_listing", window.taskListTemplate(this.tasks));
+			Handlebars.registerPartial("new_task_button", window.taskNewTaskButtonTemplate(this));
 			Handlebars.registerPartial("header", window.taskHeaderTemplate(this));
 			$(todoDiv).append(this.tasksTemplate(window[todoComponentName]));
 			this.cacheElements();
@@ -81,6 +122,14 @@ $('[class*="todo-component"]').each(function(i, element) {
 		renderTaskHeader: function() {
 			this.$headerRow.html("");
 			$(this.$headerRow).append(window.taskHeaderTemplate(window[todoComponentName]));
+			this.cacheElements();
+			this.bindEvents();
+		},
+		renderNewTaskButton: function() {
+			this.$newTaskButtonDiv.html("");
+			$(this.$newTaskButtonDiv).append(window.taskNewTaskButtonTemplate(window[todoComponentName]));
+			this.cacheElements();
+			this.bindEvents();
 		},
 		renderTaskItems: function() {
 			this.$items.html("");

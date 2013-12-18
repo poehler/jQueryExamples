@@ -48,7 +48,10 @@
 	
 	}
 
-	
+.status-code-options {
+	min-width:80px;
+	width:13%;
+	}
 .about-container {
 	color: #fff;
 	border-radius: 6px;

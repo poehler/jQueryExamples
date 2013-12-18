@@ -48,12 +48,16 @@ var IAM = (function() {
     
     return { //exposed to public
 
-    	isValidDate: function(date) {
+    	isValidDate: function(date, separator) {
     		var isValid = true;
             
     		if (this.isBlank(date))
     			isValid = false;
+    		else if (date.length < 8) 
+    			isValid = false;
     		else if (isNaN((new Date(date)).getYear())) 
+    			isValid = false;
+    		else if (new Date(date).getYear() < 100) 
     			isValid = false;
 
     		return isValid;

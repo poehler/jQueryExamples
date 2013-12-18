@@ -1,5 +1,8 @@
 (function() {
 	"use strict";
+	$.get('/components/todo/tasks.handlebars', function(content) {
+		window.tasksTemplate = Handlebars.compile(content);
+	});
 	$.get('/components/todo/tasks__status_codes.handlebars', function(content) {
 		window.statusCodesTemplate = Handlebars.compile(content);
 	});
@@ -9,8 +12,8 @@
 	$.get('/components/todo/tasks__header.handlebars', function(content) {
 		window.taskHeaderTemplate = Handlebars.compile(content);
 	});
-	$.get('/components/todo/tasks.handlebars', function(content) {
-		window.tasksTemplate = Handlebars.compile(content);
+	$.get('/components/todo/tasks__new_task_button.handlebars', function(content) {
+		window.taskNewTaskButtonTemplate = Handlebars.compile(content);
 	});
 	
     /*
