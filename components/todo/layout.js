@@ -1,19 +1,16 @@
 (function() {
 	"use strict";
-	$.get('/components/todo/tasks.handlebars', function(content) {
-		window.tasksTemplate = Handlebars.compile(content);
+	$.get('/components/todo/todos.handlebars', function(content) {
+		window.todosTemplate = Handlebars.compile(content);
 	});
-	$.get('/components/todo/tasks__status_codes.handlebars', function(content) {
+	$.get('/components/todo/todos__status_codes.handlebars', function(content) {
 		window.statusCodesTemplate = Handlebars.compile(content);
 	});
-	$.get('/components/todo/tasks__list.handlebars', function(content) {
-		window.taskListTemplate = Handlebars.compile(content);
+	$.get('/components/todo/todos__list.handlebars', function(content) {
+		window.todoListTemplate = Handlebars.compile(content);
 	});
-	$.get('/components/todo/tasks__header.handlebars', function(content) {
-		window.taskHeaderTemplate = Handlebars.compile(content);
-	});
-	$.get('/components/todo/tasks__new_task_button.handlebars', function(content) {
-		window.taskNewTaskButtonTemplate = Handlebars.compile(content);
+	$.get('/components/todo/todos__new_todo_button.handlebars', function(content) {
+		window.todoNewTodoButtonTemplate = Handlebars.compile(content);
 	});
 	
     /*
@@ -32,7 +29,7 @@
 
     	loadTemplate("/components/todo/application.hbs", todoComponentName);
     	loadTemplate("/components/todo/about.hbs", todoComponentName);
-    	loadTemplate("/components/todo/tasks.hbs", todoComponentName);
+    	loadTemplate("/components/todo/todos.hbs", todoComponentName);
         
     	var emberLoadPollingDelay = 100;
     	var timer = window.setInterval(function() {
