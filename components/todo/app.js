@@ -95,6 +95,14 @@ $('[class*="todo-component"]').each(function(i, element) {
 			this.$todoApp.on('click', '.todo-delete-confirmed-button', this.deleteTodo);
 			this.$todoApp.on('click', '.todo-reset-button', this.hideEditRow);
 			this.$todoApp.on('click', '.todo-delete-button', this.showDeleteConfirmationButtons);
+			
+			this.$todoApp.on('blur', '.todo-name-input-field', this.validateEditedTodo);
+			this.$todoApp.on('keyup', '.todo-name-input-field', this.validateEditedTodo);
+			this.$todoApp.on('blur', '.status-code-options', this.validateEditedTodo);
+			this.$todoApp.on('change', '.status-code-options',  this.validateEditedTodo);
+			this.$todoApp.on('blur', '.todo-date-field', this.validateEditedTodo);
+			this.$todoApp.on('keyup', '.todo-date-field', this.validateEditedTodo);
+ 			this.$todoApp.on('click', '.todo-save-button', this.addEditedTodo);
 		},
 		showDeleteConfirmationButtons: function() {
 			var id = $(this).parents("li").data("id");
@@ -122,9 +130,8 @@ $('[class*="todo-component"]').each(function(i, element) {
 		hideEditRow: function() {
 			var id = $(this).parents("li").data("id");
 			var updateRow = $(".todo-list").find("li.todo-update-row[data-id='" + id + "']");
-			updateRow.addClass("hide");
-			var editRow = $(".todo-list").find("li.todo-list-row[data-id='" + id + "']");
-			editRow.removeClass("hide");
+			var that = window[todoComponentName];
+			that.todoListRender();
 		},
 		render: function() {
 			this.$todoApp = $(todoDiv);
@@ -188,22 +195,72 @@ $('[class*="todo-component"]').each(function(i, element) {
 			that.$newTodoTargetCompletionDate.val("");
 			that.newTodoButtonRender();
 		},
+		addEditedTodo: function() {
+			var that = window[todoComponentName];
+			var id = $(this).parents("li").data("id");
+			
+			if(!that.validateEditedTodo())
+				return;
+			var newTodo = new Todo({ "id": Date.now(), "todoName": that.$newTodoNameField.val(), "todoStatusCode": that.$newTodoStatusCodeField.val(), "targetCompletionDate": new Date(that.$newTodoTargetCompletionDate.val()), "actualCompletionDate": null});
+			that.todos.push(newTodo);
+			that.todos.sort(window[todoComponentName].sortTodos);
+			that.todoListRender();
+			that.$newTodoNameField.val("");
+			that.$newTodoStatusCodeField.val("A");
+			that.$newTodoTargetCompletionDate.val("");
+			that.newTodoButtonRender();
+		},
+		validateTodo: function(todoName, todoStatusCode, todoTargetCompletionDate, todoActualCompletionDate) {
+			var isValid = true;
+
+			if(IAM.isBlank(todoName)) 
+				isValid = false;
+			else if(IAM.isBlank(todoStatusCode))
+				isValid = false;
+			else if(!IAM.isValidDate(todoTargetCompletionDate)) 
+				isValid = false;
+			else if(todoActualCompletionDate != null && todoActualCompletionDate != "") 
+				if(!IAM.isValidDate(todoActualCompletionDate)) 
+					isValid = false;
+					
+			return isValid;
+		},
 		validateNewTodo: function(e){
 			var that = window[todoComponentName];
-			var isNowValid = true;
+			var isValid = that.validateTodo(that.$newTodoNameField.val(), that.$newTodoStatusCodeField.val(), that.$newTodoTargetCompletionDate.val(), null );
 			
-			if(IAM.isBlank(that.$newTodoNameField.val())) 
-				isNowValid = false;
-			else if(IAM.isBlank(that.$newTodoStatusCodeField.val())) 
-				isNowValid = false;
-			else if(!IAM.isValidDate(that.$newTodoTargetCompletionDate.val())) 
-				isNowValid = false;
-			if(isNowValid != that.isValidNewTodo){
-				that.isValidNewTodo = isNowValid;
+			if(isValid != that.isValidNewTodo){
+				that.isValidNewTodo = isValid;
 				that.newTodoButtonRender();
 			}
 				
-			return isNowValid;
+			return isValid;
+		},
+		validateEditedTodo: function(e){
+			var that = window[todoComponentName];
+			var isValid = true;
+			var id = $(this).parents("li").data("id");
+			var editRow = $(".todo-list").find("li.todo-update-row[data-id='" + id + "']");
+			var todoName = $(editRow).find(".todo-name-input-field").val();
+			var todoStatusCode = $(editRow).find(".status-code-options").val();
+			var todoTargetDate = $(editRow).find(".target-date").val();
+			var todoActualDate = $(editRow).find(".actual-date").val();
+			var todoSaveButton = $(editRow).find(".todo-save-button");
+			var todoCheckButton = $(editRow).find(".todo-edit-warning");
+			
+			isValid = that.validateTodo(todoName, todoStatusCode, todoTargetDate, todoActualDate);
+			
+			if(isValid){
+				todoSaveButton.removeClass("hide");
+				todoCheckButton.addClass("hide");
+			}
+			else {
+				todoSaveButton.addClass("hide");
+				todoCheckButton.removeClass("hide");
+			}
+			
+				
+			return isValid;
 		},
 		sortByColumn: function(e) {
 			var that = window[todoComponentName];
