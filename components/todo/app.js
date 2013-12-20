@@ -12,6 +12,7 @@ var Todo = function(options) {
     this.todoStatusCode = options.todoStatusCode || "";
     this.targetCompletionDate = options.targetCompletionDate || new Date();
     this.actualCompletionDate = options.actualCompletionDate || null;
+    this.isBeingEdited = false;
     
 	this.formattedTargetCompletionDate = function() {
 		return IAM.getFormattedDateOrEmptyString(this.targetCompletionDate);
@@ -89,6 +90,41 @@ $('[class*="todo-component"]').each(function(i, element) {
 			this.$newTodoButton.on('click', this.addNewTodo);
 		},
 		todoListBindEvents: function(){
+			this.$todoApp.on('click', '.todo-edit-button', this.showEditRow);
+			this.$todoApp.on('click', '.todo-delete-not-confirmed-button', this.showEditResetButtons);
+			this.$todoApp.on('click', '.todo-delete-confirmed-button', this.deleteTodo);
+			this.$todoApp.on('click', '.todo-reset-button', this.hideEditRow);
+			this.$todoApp.on('click', '.todo-delete-button', this.showDeleteConfirmationButtons);
+		},
+		showDeleteConfirmationButtons: function() {
+			var id = $(this).parents("li").data("id");
+			var editRow = $(".todo-list").find("li.todo-list-row[data-id='" + id + "']");
+			editRow.find(".todo-delete-button").addClass("hide");
+			editRow.find(".todo-edit-button").addClass("hide");
+			editRow.find(".todo-delete-not-confirmed-button").removeClass("hide");
+			editRow.find(".todo-delete-confirmed-button").removeClass("hide");
+		},
+		showEditResetButtons: function() {
+			var id = $(this).parents("li").data("id");
+			var editRow = $(".todo-list").find("li.todo-list-row[data-id='" + id + "']");
+			editRow.find(".todo-delete-not-confirmed-button").addClass("hide");
+			editRow.find(".todo-delete-confirmed-button").addClass("hide");
+			editRow.find(".todo-delete-button").removeClass("hide");
+			editRow.find(".todo-edit-button").removeClass("hide");
+		},
+		showEditRow: function() {
+			var id = $(this).parents("li").data("id");
+			var updateRow = $(".todo-list").find("li.todo-update-row[data-id='" + id + "']");
+			updateRow.removeClass("hide");
+			var editRow = $(".todo-list").find("li.todo-list-row[data-id='" + id + "']");
+			editRow.addClass("hide");
+		},
+		hideEditRow: function() {
+			var id = $(this).parents("li").data("id");
+			var updateRow = $(".todo-list").find("li.todo-update-row[data-id='" + id + "']");
+			updateRow.addClass("hide");
+			var editRow = $(".todo-list").find("li.todo-list-row[data-id='" + id + "']");
+			editRow.removeClass("hide");
 		},
 		render: function() {
 			this.$todoApp = $(todoDiv);
@@ -117,8 +153,6 @@ $('[class*="todo-component"]').each(function(i, element) {
 				$(this.$headerRow.find('.column-4')).addClass('todo-sorted');
 
 		},
-		newTodoRender: function() {
-		},
 		todoListRender: function() {
 			this.$items.html("");
 			Handlebars.registerPartial("todos_listing", window.todoListTemplate(this.todos));
@@ -130,12 +164,22 @@ $('[class*="todo-component"]').each(function(i, element) {
 			this.cacheElements();
 			this.bindEvents();
 		},
-		
+		deleteTodo: function(){
+			var id = $(this).parents("li").data("id");
+			var that = window[todoComponentName];
+			for(var ii=0;ii<that.todos.length;ii++){
+				if(id == that.todos[ii].id) {
+					that.todos.splice(ii, 1);
+					console.log("removing " + ii);
+				}
+			}
+			that.todoListRender();
+		},
 		addNewTodo: function() {
 			var that = window[todoComponentName];
 			if(!that.validateNewTodo())
 				return;
-			var newTodo = new Todo({ "id": Date.UTC(new Date()), "todoName": that.$newTodoNameField.val(), "todoStatusCode": that.$newTodoStatusCodeField.val(), "targetCompletionDate": new Date(that.$newTodoTargetCompletionDate.val()), "actualCompletionDate": null});
+			var newTodo = new Todo({ "id": Date.now(), "todoName": that.$newTodoNameField.val(), "todoStatusCode": that.$newTodoStatusCodeField.val(), "targetCompletionDate": new Date(that.$newTodoTargetCompletionDate.val()), "actualCompletionDate": null});
 			that.todos.push(newTodo);
 			that.todos.sort(window[todoComponentName].sortTodos);
 			that.todoListRender();

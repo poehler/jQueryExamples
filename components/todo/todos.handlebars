@@ -14,15 +14,13 @@
                     </li>
                     
                     <li class="new-row">
-	                    <form name="new-form" class="new-form" action="#">
-						    <div class="column-1"><input name="newTodoName" type="text" placeholder="What needs to be done?" value="" class="todo-name-input-field"></div>
-						    <div class="column-2"><select name="newTodoStatusCode" class="status-code-options">{{> status_code_options}}</select></div>
-						    <div class="column-3"><input name="newTargetCompletionDate" type="text" placeholder="mm/dd/yyyy" value="" class="todo-date-field"></div>
-						    <div class="column-4">&nbsp;</div>
-						    <div class="column-5">
-		                		{{> new_todo_button}}
-						    </div>
-						</form>
+					    <div class="column-1"><input name="newTodoName" type="text" placeholder="What needs to be done?" value="" class="todo-name-input-field"></div>
+					    <div class="column-2"><select name="newTodoStatusCode" class="status-code-options">{{> status_code_options}}</select></div>
+					    <div class="column-3"><input name="newTargetCompletionDate" type="text" placeholder="mm/dd/yyyy" value="" class="todo-date-field"></div>
+					    <div class="column-4">&nbsp;</div>
+					    <div class="column-5">
+	                		{{> new_todo_button}}
+					    </div>
                     </li>
                 </ul>
                 {{> todos_listing}}

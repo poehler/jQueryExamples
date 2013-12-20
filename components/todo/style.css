@@ -1,8 +1,8 @@
-.task-name-input-field {
+.todo-name-input-field {
 	width:90%;
 	}
-.task-date-field {
-	width:100px;
+.todo-date-field {
+	width:80px;
 	}
 .complete div {
 	color: #c0c0c0;
@@ -97,7 +97,7 @@
 	background-color:#c0c0c0;
 	color:#00264a;
 	}
-.todo-list li.update-row div{
+.todo-list li.todo-update-row div{
 	background-color:#f3f3f3;
 	height: 3em;
 	padding-top:10px;
@@ -121,6 +121,6 @@
 .todo-sorted {
 	text-decoration:underline;
 	}
-.display-row {
-		color:#000000;
+.todo-list-row {
+	color:#000000;
 	}
