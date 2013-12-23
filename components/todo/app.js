@@ -142,6 +142,7 @@ $('[class*="todo-component"]').each(function(i, element) {
 			$(todoDiv).append(window.todosTemplate(window[todoComponentName]));
 			this.cacheElements();
 			this.bindEvents();
+			this.todoListSetStatusCodes();
 		},
 		headerRender: function() {
 			
@@ -162,8 +163,20 @@ $('[class*="todo-component"]').each(function(i, element) {
 		},
 		todoListRender: function() {
 			this.$items.html("");
-			Handlebars.registerPartial("todos_listing", window.todoListTemplate(this.todos));
 			$(this.$items).append(window.todoListTemplate(this.todos));
+			this.todoListSetStatusCodes();
+		},
+		todoListSetStatusCodes: function() {
+			var listRows = $(".todo-list").find("li.todo-list-row");
+			var that = window[todoComponentName];
+			$.each(listRows, function(ii, editRow) {
+				var id = $(editRow).data("id");
+				var targetStatusCode = $(".todo-list").find("li.todo-update-row[data-id='" + id + "']").find("select");
+				for(var ii=0;ii<that.todos.length;ii++){
+					if(id == that.todos[ii].id)
+						targetStatusCode.val(that.todos[ii].todoStatusCode);
+				}
+			});
 		},
 		newTodoButtonRender: function() {
 			this.$newTodoButtonDiv.html("");
@@ -189,26 +202,36 @@ $('[class*="todo-component"]').each(function(i, element) {
 			var newTodo = new Todo({ "id": Date.now(), "todoName": that.$newTodoNameField.val(), "todoStatusCode": that.$newTodoStatusCodeField.val(), "targetCompletionDate": new Date(that.$newTodoTargetCompletionDate.val()), "actualCompletionDate": null});
 			that.todos.push(newTodo);
 			that.todos.sort(window[todoComponentName].sortTodos);
-			that.todoListRender();
 			that.$newTodoNameField.val("");
 			that.$newTodoStatusCodeField.val("A");
 			that.$newTodoTargetCompletionDate.val("");
+			that.isValidNewTodo = false;
+			that.todoListRender();
 			that.newTodoButtonRender();
 		},
 		addEditedTodo: function() {
 			var that = window[todoComponentName];
 			var id = $(this).parents("li").data("id");
+			var editRow = $(".todo-list").find("li.todo-update-row[data-id='" + id + "']");
+			var todoName = $(editRow).find(".todo-name-input-field").val();
+			var todoStatusCode = $(editRow).find(".status-code-options").val();
+			var todoTargetDate = $(editRow).find(".target-date").val();
+			var todoActualDate = $(editRow).find(".actual-date").val();
 			
-			if(!that.validateEditedTodo())
+			if(!that.validateTodo(todoName, todoStatusCode, todoTargetDate, todoActualDate))
 				return;
-			var newTodo = new Todo({ "id": Date.now(), "todoName": that.$newTodoNameField.val(), "todoStatusCode": that.$newTodoStatusCodeField.val(), "targetCompletionDate": new Date(that.$newTodoTargetCompletionDate.val()), "actualCompletionDate": null});
-			that.todos.push(newTodo);
+				
+			for(var ii=0;ii<that.todos.length;ii++){
+				if(id == that.todos[ii].id) {
+					that.todos[ii].todoName = todoName;
+					that.todos[ii].todoStatusCode = todoStatusCode;
+					that.todos[ii].targetCompletionDate = todoTargetDate;
+					that.todos[ii].actualCompletionDate = todoActualDate;
+				}
+			}
+			
 			that.todos.sort(window[todoComponentName].sortTodos);
 			that.todoListRender();
-			that.$newTodoNameField.val("");
-			that.$newTodoStatusCodeField.val("A");
-			that.$newTodoTargetCompletionDate.val("");
-			that.newTodoButtonRender();
 		},
 		validateTodo: function(todoName, todoStatusCode, todoTargetCompletionDate, todoActualCompletionDate) {
 			var isValid = true;
@@ -278,7 +301,7 @@ $('[class*="todo-component"]').each(function(i, element) {
 		sortTodos: function(a, b) {
 			var aValue = a[window[todoComponentName].sortColumn];
 			var bValue = b[window[todoComponentName].sortColumn];
-			
+
 			if(window[todoComponentName].sortDirection)
 				return ((aValue < bValue) ? -1 : ((aValue > bValue) ? 1 : 0));
 			else
