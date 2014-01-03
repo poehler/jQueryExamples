@@ -1,7 +1,8 @@
 <div class="items">
 <ul class="todo-list">
 {{#each this}}
-        <li class="todo-update-row hide" data-id="{{id}}">
+    {{#if isBeingEdited}}
+        <li class="todo-update-row" data-id="{{id}}">
 			    <div class="column-1"><input name="todoName" type="text" value="{{todoName}}" class="todo-name-input-field"></div>
 			    <div class="column-2"><select name="todoStatusCode" class="status-code-options">{{> status_code_options}}</select></div>
 			    <div class="column-3 "><input name="targetCompletionDate" class="todo-date-field target-date" type="text" placeholder="mm/dd/yyyy" value="{{formattedTargetCompletionDate}}"></div>
@@ -12,6 +13,7 @@
 					<button class="btn btn-danger todo-button todo-reset-button">Reset</button>
 			    </div>
         </li>
+    {{else}}
 	    <li class="todo-list-row display-row" data-id="{{id}}">
 	        <div class="column-1">{{todoName}}</div>
 	        <div class="column-2">{{getStatus}}</div>
@@ -24,8 +26,6 @@
 				<button class="btn btn-danger todo-button todo-delete-not-confirmed-button hide">NO!</button>
 	        </div>
 	    </li>
-	{{#if isEditing}}
-    {{else}}
     {{/if}}
 {{/each}}
 </ul>

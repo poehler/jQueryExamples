@@ -1,11 +1,4 @@
 "use strict";
-var StatusCodes = [
-	   	{ "id": "A", "decode": "Active"},
-		{ "id": "I", "decode": "Inactive"},
-		{ "id": "O", "decode": "On Hold"},
-		{ "id": "C", "decode": "Completed"}
-];
-
 var Todo = function(options) {
     this.id = options.id || 0;
     this.todoName = options.todoName || "";
@@ -36,21 +29,28 @@ var Todo = function(options) {
     
 };
 
+var StatusCodes = [
+    { "id": "A", "decode": "Active"},
+    { "id": "I", "decode": "Inactive"},
+    { "id": "O", "decode": "On Hold"},
+    { "id": "C", "decode": "Completed"}
+];
+
 var componentIndex = 0;
 $('[class*="todo-component"]').each(function(i, element) {
 	var todoDiv = this;
 	var todoComponentName = "ToDo" + componentIndex++;
+
 	window[todoComponentName] = {
 		init : function() {
 			this.sortDirection = true;
 			this.sortColumn = "todoName";
 			this.isValidNewTodo = false;
-			
 			this.render();
 		},
+
 		cacheElements: function() {
 			this.$todoApp = $(todoDiv);
-			this.$appTitle = this.$todoApp.find('.header');
 			this.headerCacheElements();
 			this.newTodoCacheElements();
 			this.todoListCacheElements();
@@ -69,6 +69,7 @@ $('[class*="todo-component"]').each(function(i, element) {
 		todoListCacheElements: function() {
 			this.$items = this.$todoApp.find('.items');
 		},
+
 		bindEvents: function() {
 			this.headerBindEvents();
 			this.newTodoBindEvents();
@@ -82,57 +83,28 @@ $('[class*="todo-component"]').each(function(i, element) {
 		},
 		newTodoBindEvents: function() {
 			this.$newTodoNameField.on('blur', this.validateNewTodo);
-			this.$newTodoNameField.on('keyup', this.validateNewTodo);
-			this.$newTodoStatusCodeField.on('blur', this.validateNewTodo);
+            this.$newTodoStatusCodeField.on('blur', this.validateNewTodo);
+            this.$newTodoTargetCompletionDate.on('blur', this.validateNewTodo);
 			this.$newTodoStatusCodeField.on('change', this.validateNewTodo);
-			this.$newTodoTargetCompletionDate.on('blur', this.validateNewTodo);
-			this.$newTodoTargetCompletionDate.on('keyup', this.validateNewTodo);
 			this.$newTodoButton.on('click', this.addNewTodo);
+            this.$newTodoNameField.on('keyup', this.validateNewTodo);
+            this.$newTodoTargetCompletionDate.on('keyup', this.validateNewTodo);
 		},
 		todoListBindEvents: function(){
-			this.$todoApp.on('click', '.todo-edit-button', this.showEditRow);
+            this.$todoApp.on('blur', '.todo-name-input-field', this.validateEditedTodo);
+            this.$todoApp.on('blur', '.status-code-options', this.validateEditedTodo);
+            this.$todoApp.on('blur', '.todo-date-field', this.validateEditedTodo);
+            this.$todoApp.on('change', '.status-code-options',  this.validateEditedTodo);
+			this.$todoApp.on('click', '.todo-edit-button', this.toggleEditRow);
 			this.$todoApp.on('click', '.todo-delete-not-confirmed-button', this.showEditResetButtons);
 			this.$todoApp.on('click', '.todo-delete-confirmed-button', this.deleteTodo);
-			this.$todoApp.on('click', '.todo-reset-button', this.hideEditRow);
+			this.$todoApp.on('click', '.todo-reset-button', this.toggleEditRow);
 			this.$todoApp.on('click', '.todo-delete-button', this.showDeleteConfirmationButtons);
-			
-			this.$todoApp.on('blur', '.todo-name-input-field', this.validateEditedTodo);
-			this.$todoApp.on('keyup', '.todo-name-input-field', this.validateEditedTodo);
-			this.$todoApp.on('blur', '.status-code-options', this.validateEditedTodo);
-			this.$todoApp.on('change', '.status-code-options',  this.validateEditedTodo);
-			this.$todoApp.on('blur', '.todo-date-field', this.validateEditedTodo);
+            this.$todoApp.on('click', '.todo-save-button', this.addEditedTodo);
+            this.$todoApp.on('keyup', '.todo-name-input-field', this.validateEditedTodo);
 			this.$todoApp.on('keyup', '.todo-date-field', this.validateEditedTodo);
- 			this.$todoApp.on('click', '.todo-save-button', this.addEditedTodo);
 		},
-		showDeleteConfirmationButtons: function() {
-			var id = $(this).parents("li").data("id");
-			var editRow = $(".todo-list").find("li.todo-list-row[data-id='" + id + "']");
-			editRow.find(".todo-delete-button").addClass("hide");
-			editRow.find(".todo-edit-button").addClass("hide");
-			editRow.find(".todo-delete-not-confirmed-button").removeClass("hide");
-			editRow.find(".todo-delete-confirmed-button").removeClass("hide");
-		},
-		showEditResetButtons: function() {
-			var id = $(this).parents("li").data("id");
-			var editRow = $(".todo-list").find("li.todo-list-row[data-id='" + id + "']");
-			editRow.find(".todo-delete-not-confirmed-button").addClass("hide");
-			editRow.find(".todo-delete-confirmed-button").addClass("hide");
-			editRow.find(".todo-delete-button").removeClass("hide");
-			editRow.find(".todo-edit-button").removeClass("hide");
-		},
-		showEditRow: function() {
-			var id = $(this).parents("li").data("id");
-			var updateRow = $(".todo-list").find("li.todo-update-row[data-id='" + id + "']");
-			updateRow.removeClass("hide");
-			var editRow = $(".todo-list").find("li.todo-list-row[data-id='" + id + "']");
-			editRow.addClass("hide");
-		},
-		hideEditRow: function() {
-			var id = $(this).parents("li").data("id");
-			var updateRow = $(".todo-list").find("li.todo-update-row[data-id='" + id + "']");
-			var that = window[todoComponentName];
-			that.todoListRender();
-		},
+
 		render: function() {
 			this.$todoApp = $(todoDiv);
 			this.$todoApp.html("");
@@ -145,7 +117,6 @@ $('[class*="todo-component"]').each(function(i, element) {
 			this.todoListSetStatusCodes();
 		},
 		headerRender: function() {
-			
 			$(this.$headerRow.find('.column-1')).removeClass('todo-sorted');
 			$(this.$headerRow.find('.column-2')).removeClass('todo-sorted');
 			$(this.$headerRow.find('.column-3')).removeClass('todo-sorted');
@@ -166,31 +137,66 @@ $('[class*="todo-component"]').each(function(i, element) {
 			$(this.$items).append(window.todoListTemplate(this.todos));
 			this.todoListSetStatusCodes();
 		},
+        newTodoButtonRender: function() {
+            this.$newTodoButtonDiv.html("");
+            $(this.$newTodoButtonDiv).append(window.todoNewTodoButtonTemplate(window[todoComponentName]));
+            this.cacheElements();
+            this.bindEvents();
+        },
+
 		todoListSetStatusCodes: function() {
 			var listRows = $(".todo-list").find("li.todo-list-row");
 			var that = window[todoComponentName];
+
 			$.each(listRows, function(ii, editRow) {
 				var id = $(editRow).data("id");
 				var targetStatusCode = $(".todo-list").find("li.todo-update-row[data-id='" + id + "']").find("select");
 				for(var ii=0;ii<that.todos.length;ii++){
-					if(id == that.todos[ii].id)
-						targetStatusCode.val(that.todos[ii].todoStatusCode);
+					if(id == that.todos[ii].id) {
+                        targetStatusCode.val(that.todos[ii].todoStatusCode);
+                        break;
+                    }
 				}
 			});
 		},
-		newTodoButtonRender: function() {
-			this.$newTodoButtonDiv.html("");
-			$(this.$newTodoButtonDiv).append(window.todoNewTodoButtonTemplate(window[todoComponentName]));
-			this.cacheElements();
-			this.bindEvents();
-		},
+        showDeleteConfirmationButtons: function() {
+            var id = $(this).parents("li").data("id");
+            var editRow = $(".todo-list").find("li.todo-list-row[data-id='" + id + "']");
+
+            editRow.find(".todo-delete-button").addClass("hide");
+            editRow.find(".todo-edit-button").addClass("hide");
+            editRow.find(".todo-delete-not-confirmed-button").removeClass("hide");
+            editRow.find(".todo-delete-confirmed-button").removeClass("hide");
+        },
+        showEditResetButtons: function() {
+            var id = $(this).parents("li").data("id");
+            var editRow = $(".todo-list").find("li.todo-list-row[data-id='" + id + "']");
+
+            editRow.find(".todo-delete-not-confirmed-button").addClass("hide");
+            editRow.find(".todo-delete-confirmed-button").addClass("hide");
+            editRow.find(".todo-delete-button").removeClass("hide");
+            editRow.find(".todo-edit-button").removeClass("hide");
+        },
+        toggleEditRow: function() {
+            var that = window[todoComponentName];
+            var id = $(this).parents("li").data("id");
+
+            for(var ii=0;ii<that.todos.length;ii++){
+                if(id == that.todos[ii].id) {
+                    that.todos[ii].isBeingEdited = !that.todos[ii].isBeingEdited;
+                    break;
+                }
+            }
+
+            that.todoListRender();
+        },
+
 		deleteTodo: function(){
 			var id = $(this).parents("li").data("id");
 			var that = window[todoComponentName];
 			for(var ii=0;ii<that.todos.length;ii++){
 				if(id == that.todos[ii].id) {
 					that.todos.splice(ii, 1);
-					console.log("removing " + ii);
 				}
 			}
 			that.todoListRender();
@@ -227,12 +233,15 @@ $('[class*="todo-component"]').each(function(i, element) {
 					that.todos[ii].todoStatusCode = todoStatusCode;
 					that.todos[ii].targetCompletionDate = todoTargetDate;
 					that.todos[ii].actualCompletionDate = todoActualDate;
+                    that.todos[ii].isBeingEdited = false;
+                    break;
 				}
 			}
 			
 			that.todos.sort(window[todoComponentName].sortTodos);
 			that.todoListRender();
 		},
+
 		validateTodo: function(todoName, todoStatusCode, todoTargetCompletionDate, todoActualCompletionDate) {
 			var isValid = true;
 
@@ -281,11 +290,11 @@ $('[class*="todo-component"]').each(function(i, element) {
 				todoSaveButton.addClass("hide");
 				todoCheckButton.removeClass("hide");
 			}
-			
-				
+
 			return isValid;
 		},
-		sortByColumn: function(e) {
+
+        sortByColumn: function(e) {
 			var that = window[todoComponentName];
 			
 			if (that.sortColumn == e.data.column) 
