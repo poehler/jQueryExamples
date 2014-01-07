@@ -111,7 +111,7 @@ $('[class*="todo-component"]').each(function(i, element) {
 			this.todoListSetStatusCodes();
 		},
 		headerRender: function() {
-			this.headerRow.find("[class*=column-]").removeClas('todo-sorted');
+			this.headerRow.find("[class*=column-]").removeClass('todo-sorted');
 
 			if(this.sortColumn == "todoName") 
 				$(this.headerRow.find('.column-1')).addClass('todo-sorted');
@@ -194,6 +194,16 @@ $('[class*="todo-component"]').each(function(i, element) {
 			}
 			that.todoListRender();
 		},
+		createNewID: function() {
+			var id;
+
+			if (Date.now)
+				id = Date.now();
+			else
+				id = new Date().valueOf();
+
+			return id;
+		},
 		insertTodo: function() {
 			var that = window[todoComponentName];
 			var isValid = that.validateTodo(0);
@@ -201,7 +211,7 @@ $('[class*="todo-component"]').each(function(i, element) {
 			if(!isValid)
 				return;
 
-			var newTodo = new Todo({"id": Date.now(), "todoName": that.newTodoNameField.val(), "todoStatusCode": that.newTodoStatusCodeField.val(), "targetCompletionDate": new Date(that.newTodoTargetCompletionDate.val()), "actualCompletionDate": null});
+			var newTodo = new Todo({"id": that.createNewID(), "todoName": that.newTodoNameField.val(), "todoStatusCode": that.newTodoStatusCodeField.val(), "targetCompletionDate": new Date(that.newTodoTargetCompletionDate.val()), "actualCompletionDate": null});
 
 			that.todos.push(newTodo);
 			that.todos.sort(window[todoComponentName].sortTodos);
