@@ -1,4 +1,4 @@
-    <div class="todo-container row-fluid" align="center">
+    <div class="todo-container row-fluid todo-{{identifier}}" align="center">
         <header class="header" align="center">
             <h2>To Do List</h2>
         </header>
@@ -6,17 +6,17 @@
             <div class="span10 offset1">
                 <ul class="todo-list">
                     <li class="header-row">
-	                    <div class="column-1">Name</div>
+	                    <div class="column-1 todo-sorted">Name</div>
 						<div class="column-2">Status</div>
 						<div class="column-3">Target Date</div>
 						<div class="column-4">Actual Date</div>
 						<div class="column-5">Action</div>	
                     </li>
                     
-                    <li class="new-row">
-					    <div class="column-1"><input name="newTodoName" type="text" placeholder="What needs to be done?" value="" class="todo-name-input-field"></div>
-					    <div class="column-2"><select name="newTodoStatusCode" class="status-code-options">{{> status_code_options}}</select></div>
-					    <div class="column-3"><input name="newTargetCompletionDate" type="text" placeholder="mm/dd/yyyy" value="" class="todo-date-field"></div>
+                    <li class="new-row" data-id="0">
+					    <div class="column-1"><input name="todoName" type="text" placeholder="What needs to be done?" value="" class="todo-name-input-field"></div>
+					    <div class="column-2"><select name="todoStatusCode" class="status-code-options">{{> status_code_options}}</select></div>
+					    <div class="column-3"><input name="targetCompletionDate" type="text" placeholder="mm/dd/yyyy" value="" class="todo-date-field target-date"></div>
 					    <div class="column-4">&nbsp;</div>
 					    <div class="column-5">
 	                		{{> new_todo_button}}
